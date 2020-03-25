@@ -7,17 +7,22 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 </head>
 <body>
-    <form action="/upload-image" method="POST" enctype="multipart/form-data" class="border m-5">
-    <!-- <form action="https://api.cloudinary.com/v1_1/dfifvbzoq/auto/upload" method="POST" enctype="multipart/form-data" class="border m-5"> -->
+    <div class="container my-5">
+        <form action="/upload-image" method="POST" enctype="multipart/form-data">        
+            <div class="custom-file my-5 col-sm-12">
+                <!-- <input type="file" accept="image/jpg" name="image" required>
+                <label class="custom-file-label" for="customFile">Choose file</label> -->
 
-        <div class="form-group">
-            <label for="exampleFormControlFile1">Example file input</label>
-            <input type="file" class="form-control-file" id="exampleFormControlFile1" name="media-file">
-        </div>
-        <input type="submit">
-    </form>
+                <label for="exampleFormControlFile1">Example file input</label>
+                <br>
+                <!-- <input type="file" accept="image/jpg" name="pic-to-be-sent" required> -->
+                <input type="file" name="pic-to-be-sent"/>
+                <br>
+                <input type="submit">
+            </div>
+        </form>
+    </div>
 <ul id="messages"></ul>
-<input type="text" id="myMessage">
-<button id="sendbutton">Send</button>
+
 </body>
 </html>
