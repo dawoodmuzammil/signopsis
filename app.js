@@ -8,6 +8,9 @@ var logger = require('morgan');
 var bodyParser     =    require('body-parser')
 // var methodOverride  =   require("method-override")
 
+// // FIREBASE SETUP
+var db = require("./database/config");
+
 var indexRouter = require('./routes/index');
 
 var app = express();
