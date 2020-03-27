@@ -7,9 +7,9 @@ cloudinary.config({
 });
 
 module.exports = {
-    async postPicture( req, res, next) {
-        console.log(process.env.CLOUDINARY_URL);
-        var image = await cloudinary.v2.uploader.upload(req.file.path); // upload it on cloudinary
+    async postPicture( req, res, next) {        
+        var image = await cloudinary.v2.uploader.upload(req.file.path,
+            { resource_type: "video" }); // upload it on cloudinary
         // get info from cloudinary to be saved in the database
         var image = {
             url: image.secure_url,
