@@ -1,28 +1,31 @@
-<html>
+<html lang="en">
 <head>
-<title>Chat Room</title>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <title>Login</title>
 </head>
 <body>
-    <div class="container my-5">
-        <form action="/upload-image" method="POST" enctype="multipart/form-data">        
-            <div class="custom-file my-5 col-sm-12">
-                <!-- <input type="file" accept="image/jpg" name="image" required>
-                <label class="custom-file-label" for="customFile">Choose file</label> -->
-
-                <label for="exampleFormControlFile1">Example file input</label>
-                <br>
-                <!-- <input type="file" accept="image/jpg" name="pic-to-be-sent" required> -->
-                <input type="file" name="pic-to-be-sent"/>
-                <br>
-                <input type="submit">
-            </div>
-        </form>
+    <div class="container col-sm-3 my-5">
+        <div class="container col-sm-12 d-flex justify-content-center mb-3">
+            <h4 class="display-4">Login</h4>
+        </div>
+         <form>             
+             <div class="form-group">
+                 <label for="exampleInputPassword1">Username</label>
+                 <input type="text" class="form-control" id="exampleInputPassword1" name="username">
+             </div>                     
+             <div class="form-group">
+                 <label for="exampleInputPassword1">Password</label>
+                 <input type="password" class="form-control" id="exampleInputPassword1" name="password">
+             </div>             
+             <div class="d-flex justify-content-center mt-5">
+                 <button type="submit" class="btn btn-lg btn-primary">Login</button>                
+             </div>
+             <div class="d-flex justify-content-center mt-1">
+                 <a href="/register">Not a member? Signup.</a>
+             </div>
+         </form>
     </div>
-<ul id="messages"></ul>
-
 </body>
 </html>

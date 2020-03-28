@@ -6,13 +6,19 @@ const upload = multer({
 });
 
 const { asyncErrorHandler } =    require('../middleware/index');
-const { postPicture } = require("../controllers/pictures");
+const { postVideo } = require("../controllers/index");
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+    res.render('index');
 });
 
-router.post("/upload-image", upload.single('pic-to-be-sent'), asyncErrorHandler(postPicture));
+/* GET register page. */
+router.get('/register', function(req, res, next) {
+    res.render('register');
+});
+
+/* GET video-upload page. */
+router.post("/upload-video", upload.single('pic-to-be-sent'), asyncErrorHandler(postVideo));
 
 module.exports = router;
