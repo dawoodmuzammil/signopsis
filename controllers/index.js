@@ -28,16 +28,19 @@ cloudinary.config({
 const chatsCollection = db.collection("chats"); // get chats collection
 
 module.exports = {
-    async registerUser( req, res, next) {
+    async registerUser( req, res, next) {  
+        var email = req.body.email;
+        var password = req.body.password;      
+        const usersCollection = db.collection("users"); // get users collection
+
+        var registerResult = await firebase.auth().createUserWithEmailAndPassword( email, password);
+        var uid = registerResult.user.uid;
         var user = {
-            username: req.body.username,
-            email: req.body.email,
-            password: req.body.password,
             name: req.body.name,
             dob: req.body.dob
         }
-        var registerResult = await firebase.auth().createUserWithEmailAndPassword( user.email, user.password);
-        console.log( registerResult);
+        const docRef = usersCollection.doc(uid).set( user);
+
         res.redirect("/video-upload");
     },
 
