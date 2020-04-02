@@ -67,7 +67,7 @@ module.exports = {
         else
             res.redirect("/");
     },
-
+    // comment for testing
     async postVideo( req, res, next) {        
         var user = firebase.auth().currentUser;
         
