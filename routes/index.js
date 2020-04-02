@@ -18,7 +18,7 @@ router.get('/', function(req, res, next) {
 /* POST login page. */
 router.post('/login', asyncErrorHandler(signInUser));
 
-// ================ LOGIN ================ //
+// ================ REGISTER ================ //
 /* GET register page. */
 router.get('/register', function(req, res, next) {
     res.render('register');
