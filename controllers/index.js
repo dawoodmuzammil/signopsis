@@ -87,7 +87,7 @@ module.exports = {
             let addChatObj = chatsCollection.add( chatObj);
 
             console.log(chatObj);
-            res.send("POST /post");
+            res.send(chatObj.url);
         }
         else {
             res.redirect("/");

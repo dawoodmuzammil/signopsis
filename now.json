@@ -1,0 +1,25 @@
+{
+    "version": 2,
+    "env": { "CLOUDINARY_URL": "@cloudinary_url" },
+    "builds": 
+    [
+        { 
+            "src": "app.js", 
+            "use": "@now/node" 
+        }
+    ],
+    "routes":
+    [
+        {
+            "src": "/(.*)",
+            "dest": "app.js"
+        },
+      
+        {
+            "src": "/items",
+            "methods": ["GET"],
+            "status" : 404
+        }
+    ]
+
+}
