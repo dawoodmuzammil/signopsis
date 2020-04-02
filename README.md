@@ -1,4 +1,4 @@
-# **Shopping List Microservice**
+# **SaySL Signchat Microservice**
 
 A microservice created as part of the CS492 at Bilkent University. This microservice handles user authentication and video upload for the SignChat feature.
 
