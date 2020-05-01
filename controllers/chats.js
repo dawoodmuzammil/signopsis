@@ -1,9 +1,11 @@
 var cloudinary  =   require("cloudinary");
 var db          =   require("../database/config");
 var firebase = require("firebase/app");
+let admin = require("firebase-admin");
 
 // Add the Firebase products that you want to use
 require("firebase/auth");
+// require("firebase/firestore");
 
 // Your web app's Firebase configuration
 var firebaseConfig = {
@@ -29,7 +31,7 @@ cloudinary.config({
 const usersCollection = db.collection("users"); // get chats collection
 const chatsCollection = db.collection("chats"); // get chats collection
 const userChatsCollection = db.collection("userChats"); // get chats collection
-const chatMessagesCollection = db.collection("chatMessages"); // get chats collection
+// const messagesCollection = chatsCollection.collection("messages"); // get chats collection
 
 module.exports = {
     // POST VIDEO
@@ -60,46 +62,50 @@ module.exports = {
     },
 
     async postSendMessage( req, res, next) {
-        // check for sender if he already has this chat
+        var sender = req.body.sender; // Dawood
+        var receiver = req.body.receiver; // Talha        
         
-        var today = new Date();
-        var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-        var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+        // check for sender if he already has this chat        
+        var chatID = await getChatId( sender, receiver);
 
-        var sender = "YrBpD7BnaKbMUQjAoXHkpicohjA2"; // Dawood
-        var receiver = "kBRZhYLoIRWvitbuqylj3OowJQY2"; // Talha
-
-        // const userSnapshot = await usersCollection.where('id', '==', sender).get();
-        // const users = [];
-
-        // userSnapshot.forEach((doc) => {
-        //     users.push({
-        //         id: doc.id,
-        //         data: doc.data()
-        //     });
-        // })
-        // res.send( users);
-
-        // var obj = usersCollection.get();
-
-        var content = "This is a message from Dawood to Talha";
-        var seen = false;
-        var message_date = date;
-        var message_time = time;
+        // if chat exists, send message
+        if ( !chatID) {                        
+            chatID = await createChat( sender, receiver);            
+            updateUserChatsCollection( chatID, sender, receiver);
+        }
 
         var message = {
             sender: sender,
-            content: content,
-            seen: seen,
-            message_date: message_date,
-            message_time: message_time
+            content:  req.body.content,
+            seen: false,
+            message_date: getDate(),
+            message_time: getTime()
         }
-
         
-        chatID = await getChatId( sender, receiver);
+        let createdMessage = await chatsCollection.doc( chatID)
+                                    .collection("messages")
+                                    .add(message);
+        await chatsCollection.doc( chatID).update({
+                            lastMessage: createdMessage.id
+                        });
+        
 
         res.send( chatID);        
     }
+}
+
+function getDate() {
+    var today = new Date();
+    var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+    
+    return date;
+}
+
+function getTime() {
+    var today = new Date();
+    var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+
+    return time;
 }
 
 async function getChatId( sender, receiver) {
@@ -124,4 +130,26 @@ async function getChatId( sender, receiver) {
     let chatID = senderChatId.filter( x => receiverChatId.includes(x));
     
     return chatID[0];
+}
+
+async function createChat( sender, receiver) {
+    let chatObj = {
+        members: [sender, receiver],
+        lastMessage: null
+    }
+    let createdChat = await chatsCollection.add( chatObj);
+    return createdChat.id;
+}
+
+async function updateUserChatsCollection( chatID, sender, receiver) {
+    let senderRef = userChatsCollection.doc( sender);
+    let receiverRef = userChatsCollection.doc( receiver);    
+
+    let senderUpdate = await senderRef.update({
+        chats: admin.firestore.FieldValue.arrayUnion( chatID)
+    });
+
+    let receiverUpdate = await receiverRef.update({
+        chats: admin.firestore.FieldValue.arrayUnion( chatID)
+    })
 }
