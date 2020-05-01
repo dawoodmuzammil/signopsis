@@ -12,6 +12,7 @@ var bodyParser     =    require('body-parser')
 var db = require("./database/config");
 
 var indexRouter = require('./routes/index');
+var chatsRouter = require('./routes/chats');
 
 var app = express();
 var http = require('http').createServer(app);
@@ -32,6 +33,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.use('/', indexRouter);
+app.use('/chats', chatsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

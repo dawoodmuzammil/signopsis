@@ -1,10 +1,5 @@
 var express = require('express');
 var router = express.Router();
-multer = require('multer');
-
-const upload = multer({
-    'dest': 'uploads/'
-});
 
 const { asyncErrorHandler } =    require('../middleware/index');
 const { signInUser, registerUser, getMainPage, postVideo, getLogout } = require("../controllers/index");
@@ -27,14 +22,11 @@ router.get('/register', function(req, res, next) {
 /* POST register page. */
 router.post('/register', asyncErrorHandler(registerUser));
 
-// ================ VIDEO ================ //
+// ================ GET MAIN PAGE ================ //
 /* GET video-upload page. */
 router.get('/video-upload', asyncErrorHandler(getMainPage));
 
-/* GET video-upload page. */
-router.post("/upload-video", upload.single('pic-to-be-sent'), asyncErrorHandler(postVideo));
-
-// ================ LOGIN ================ //
+// ================ LOG OUT ================ //
 router.get("/logout", asyncErrorHandler( getLogout));
 
 module.exports = router;

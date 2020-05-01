@@ -25,18 +25,21 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_URL
 });
 
-const chatsCollection = db.collection("chats"); // get chats collection
+const usersCollection = db.collection("users"); // get users collection
 
 module.exports = {
+
+    // == == == REGISTER USER == == == //
     async registerUser( req, res, next) {  
         var email = req.body.email;
         var password = req.body.password;      
-        const usersCollection = db.collection("users"); // get users collection
-
+        
         var registerResult = await firebase.auth().createUserWithEmailAndPassword( email, password);
         var uid = registerResult.user.uid;
         var user = {
+            id: uid,
             name: req.body.name,
+            email: email,
             dob: req.body.dob
         }
         const docRef = usersCollection.doc(uid).set( user);
@@ -44,9 +47,10 @@ module.exports = {
         res.redirect("/video-upload");
     },
 
+    // == == == LOG IN USER == == == //
     async signInUser( req, res, next ) {
         var user = firebase.auth().currentUser;
-
+        
         if ( !user) {
             var email = req.body.email;
             var password = req.body.password;
@@ -59,6 +63,7 @@ module.exports = {
         }
     },
 
+    // == == == GET MAIN PAGE == == == //
     async getMainPage( req, res, next) {
         var user = firebase.auth().currentUser;        
         
@@ -66,34 +71,9 @@ module.exports = {
             res.render("main");
         else
             res.redirect("/");
-    },
-    // comment for testing
-    async postVideo( req, res, next) {        
-        var user = firebase.auth().currentUser;
-        
-        if ( user) {
-            var image = await cloudinary.v2.uploader.upload(req.file.path,
-                { resource_type: "video" }); // upload it on cloudinary
-            // get info from cloudinary to be saved in the database
-            var chatObj = {
-                sender: user.email,
-                receiver: "receiver@gmail.com",
-                timestamp: new Date(),
-                url: image.secure_url,
-                public_id: image.public_id
-            };	        
+    },    
 
-            // const docRef = chatsCollection.doc("pictureRef");
-            let addChatObj = chatsCollection.add( chatObj);
-
-            console.log(chatObj);
-            res.send(chatObj.url);
-        }
-        else {
-            res.redirect("/");
-        }
-    },
-
+    // == == == LOG OUT == == == //
     async getLogout( req, res, next) {
         firebase.auth().signOut();
         res.redirect("/");
