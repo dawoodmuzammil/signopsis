@@ -20,6 +20,18 @@ The API is now online [here](https://saysl-signchat.herokuapp.com/).
     *  Registers a new user
     * `Body: { email: String, password: String, name: String, dob (Date of birth): Date}`
 
+* POST `/sendMessage`
+    * Sends a message from user X to user Y
+    * `Body: { sender: String, receiver: String, content: String}`
+    * **sender**: Firebase unique user ID of X
+    * **receiver**: Firebase unique user ID of Y
+    * **content**: message content
+    * **example:**
+        * "receiver": "UlrXRNuR5McgMVVACerMHgLXv412", 
+        * "sender": "YOC6hLno9dTN4UnB5COWafsp4cV2",
+        * "content":  "This is a test message from X to Y"
+    
+
 *  GET `/video-upload` 
     *  Displays the page where we can upload videos (only for browsers - testing)
 
