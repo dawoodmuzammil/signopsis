@@ -38,6 +38,11 @@ module.exports = {
         // register user
         var registerResult = await firebase.auth().createUserWithEmailAndPassword( email, password);
         
+        var user = firebase.auth().currentUser;
+        await user.updateProfile({
+            displayName: req.body.name
+        })        
+        
         var uid = registerResult.user.uid;
         
         var user = {
@@ -56,8 +61,7 @@ module.exports = {
         }
         const chatRef = await userChatsCollection.doc(uid).set( userChatsObj);
 
-
-        // res.redirect("/video-upload");
+        res.send( user);
     },
 
     // == == == LOG IN USER == == == //
