@@ -68,10 +68,13 @@ module.exports = {
             var email = req.body.email;
             var password = req.body.password;
 
-            user = await firebase.auth().signInWithEmailAndPassword( email, password);
-            // res.redirect("/video-upload");
+            // sign user in: if login fails, send error message as response
+            user = await firebase.auth().signInWithEmailAndPassword( email, password)
+                            .catch( function( error) {
+                                res.send( error.message);
+                            });
         }
-        // send user object
+        // login successful: send user object as response
         res.send( user);        
     },
 
