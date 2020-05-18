@@ -43,9 +43,9 @@ module.exports = {
             displayName: req.body.name
         })        
         
-        var uid = registerResult.user.uid;
+        var uid = user.uid;
         
-        var user = {
+        var userDetails = {
             id: uid,
             name: req.body.name,
             email: email,
@@ -53,7 +53,7 @@ module.exports = {
         } 
         
         // add user info in users collection
-        const docRef = await usersCollection.doc(uid).set( user);
+        const docRef = await usersCollection.doc(uid).set( userDetails);
 
         // add user in userChatsCollection
         let userChatsObj = {

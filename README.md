@@ -20,7 +20,7 @@ The API is now online [here](https://saysl-signchat.herokuapp.com/).
     *  Registers a new user
     * `Body: { email: String, password: String, name: String, dob (Date of birth): Date}`
 
-* POST `/sendMessage`
+* POST `/chats/sendMessage`
     * Sends a message from user X to user Y
     * `Body: { sender: String, receiver: String, content: String}`
     * **sender**: Firebase unique user ID of X
