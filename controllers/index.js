@@ -48,8 +48,8 @@ module.exports = {
         var userDetails = {
             id: uid,
             name: req.body.name,
-            email: email,
-            dob: req.body.dob
+            email: email
+            // dob: req.body.dob
         } 
         
         // add user info in users collection
