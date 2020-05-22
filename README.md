@@ -42,3 +42,10 @@ The API is now online [here](https://saysl-signchat.herokuapp.com/).
     
 *  GET `/logout` 
     *  Log users out
+
+* POST `/reset-password`
+    * Sends a password reset email to the user
+    * Example JSON payload:
+        * `{`
+        * `   "email": "example@example.com"`
+        * `}`
