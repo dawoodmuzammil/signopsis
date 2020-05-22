@@ -100,6 +100,40 @@ module.exports = {
         res.redirect("/");
     },
 
+    // == == == UPDATE NAME == == == //
+    async updateUserDisplayName( req, res, next) {
+        var user = firebase.auth().currentUser;
+
+        await user.updateProfile({
+            displayName: req.body.displayName,            
+        }).catch( function( error) {
+            res.status(500).send(error.message);
+        })
+
+    },
+
+    // == == == UPDATE EMAIL == == == //
+    async updateUserEmail( req, res, next) {
+        var user = firebase.auth().currentUser;
+
+        user.updateEmail("user@example.com").then(function() {
+            res.status(200).end();
+        }).catch(function(error) {
+            res.status(500).send(error.message);            
+        });        
+    },
+
+    // == == == UPDATE PASSWORD == == == //
+    async updateUserPassword( req, res, next) {
+        var user = firebase.auth().currentUser;
+        var newPassword = req.body.password;
+        
+        user.updatePassword(newPassword).then(function() {          
+        }).catch(function(error) {
+            res.send( error.message);
+        });        
+    }
+
     // == == == RESET PASSWORD == == == //
     async resetPassword( req, res, next) {
         var auth = firebase.auth();
@@ -111,7 +145,14 @@ module.exports = {
         }).catch(function(error) {
             res.status(500).send(error.message);            
         });
-    }
+    },
+
+    // == == == RESET PASSWORD == == == //
+    async deleteAccount( req, res, next) {
+
+    },
+
+    // == == == UPDATE PASSWORD == == == //
 }
 
 async function sendVerificationEmail() {
