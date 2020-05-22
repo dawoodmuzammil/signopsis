@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 const { asyncErrorHandler } =    require('../middleware/index');
-const { signInUser, registerUser, getMainPage, postVideo, getLogout } = require("../controllers/index");
+const { signInUser, registerUser, getMainPage, postVideo, getLogout, resetPassword } = require("../controllers/index");
 
 // ================ LOGIN ================ //
 /* GET login page. */
@@ -28,5 +28,8 @@ router.get('/video-upload', asyncErrorHandler(getMainPage));
 
 // ================ LOG OUT ================ //
 router.get("/logout", asyncErrorHandler( getLogout));
+
+// ================ PASSWORD RESET ================ //
+router.post('/reset-password', asyncErrorHandler( resetPassword))
 
 module.exports = router;

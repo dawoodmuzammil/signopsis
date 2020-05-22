@@ -98,6 +98,19 @@ module.exports = {
     async getLogout( req, res, next) {
         firebase.auth().signOut();
         res.redirect("/");
+    },
+
+    // == == == RESET PASSWORD == == == //
+    async resetPassword( req, res, next) {
+        var auth = firebase.auth();
+        var emailAddress = req.body.email;
+        console.log(emailAddress);
+
+        await auth.sendPasswordResetEmail(emailAddress).then(function() {
+            res.status(200).end();
+        }).catch(function(error) {
+            res.status(500).send(error.message);            
+        });
     }
 }
 
