@@ -43,6 +43,26 @@ The API is now online [here](https://saysl-signchat.herokuapp.com/).
 *  GET `/logout` 
     *  Log users out
 
+* POST `/update-name`
+    * Updates displayName property of user
+    * Example JSON payload:
+        * `{`
+        * `   "name": "Example Name"`
+        * `}`
+        
+* POST `/update-email`
+    * Update email of user
+    * Example JSON payload:
+        * `{`
+        * `   "email": "example@example.com"`
+        * `}`
+* POST `/update-password`
+    * Update password of user
+    * Example JSON payload:
+        * `{`
+        * `   "password": "xxxxxxxx"`
+        * `}`
+
 * POST `/reset-password`
     * Sends a password reset email to the user
     * Example JSON payload:
@@ -52,3 +72,4 @@ The API is now online [here](https://saysl-signchat.herokuapp.com/).
     * Response
         * Email sending successful: `200 OK`
         * Email sending unsuccesful: `500 Internal Server Error`
+
