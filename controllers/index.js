@@ -110,14 +110,18 @@ module.exports = {
             res.status(500).send(error.message);
         })
 
+        res.send( user);
+
     },
 
     // == == == UPDATE EMAIL == == == //
     async updateUserEmail( req, res, next) {
         var user = firebase.auth().currentUser;
+        var newEmail = req.body.email;
 
-        user.updateEmail("user@example.com").then(function() {
-            res.status(200).end();
+        user.updateEmail(newEmail).then(function() {
+            sendVerificationEmail();
+            res.status(200).send( user);
         }).catch(function(error) {
             res.status(500).send(error.message);            
         });        
@@ -129,19 +133,21 @@ module.exports = {
         var newPassword = req.body.password;
         
         user.updatePassword(newPassword).then(function() {          
+            res.send( user);
         }).catch(function(error) {
             res.send( error.message);
         });        
-    }
+    },
 
     // == == == RESET PASSWORD == == == //
     async resetPassword( req, res, next) {
         var auth = firebase.auth();
         var emailAddress = req.body.email;
-        console.log(emailAddress);
+        var str = "A password reset email has been sent at ";
+        str = str.concat( emailAddress);
 
         await auth.sendPasswordResetEmail(emailAddress).then(function() {
-            res.status(200).end();
+            res.status(200).send( str);
         }).catch(function(error) {
             res.status(500).send(error.message);            
         });
@@ -150,7 +156,7 @@ module.exports = {
     // == == == RESET PASSWORD == == == //
     async deleteAccount( req, res, next) {
 
-    },
+    }
 
     // == == == UPDATE PASSWORD == == == //
 }
