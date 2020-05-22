@@ -41,7 +41,9 @@ module.exports = {
         var user = firebase.auth().currentUser;
         await user.updateProfile({
             displayName: req.body.name
-        })        
+        })
+        
+        sendVerificationEmail();
         
         var uid = user.uid;
         
@@ -97,4 +99,14 @@ module.exports = {
         firebase.auth().signOut();
         res.redirect("/");
     }
+}
+
+async function sendVerificationEmail() {
+    var user = firebase.auth().currentUser;
+
+    // send verification email to logged in user
+    await user.sendEmailVerification()
+        .catch(function(error) {
+            res.send( error.message); // send error message            
+        });
 }
