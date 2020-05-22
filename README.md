@@ -49,3 +49,6 @@ The API is now online [here](https://saysl-signchat.herokuapp.com/).
         * `{`
         * `   "email": "example@example.com"`
         * `}`
+    * Response
+        * Email sending successful: `200 OK`
+        * Email sending unsuccesful: `500 Internal Server Error`
