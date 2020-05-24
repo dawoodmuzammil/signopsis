@@ -6,6 +6,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var bodyParser     =    require('body-parser')
+var mongoose     =    require('mongoose')
 // var methodOverride  =   require("method-override")
 
 // // FIREBASE SETUP
@@ -32,6 +33,23 @@ app.use(express.static(path.join(__dirname, 'public')));
 // for BodyParser
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+
+// CONNECT TO MONGO
+
+// connect to the database  
+mongoose.connect(process.env.mongo_uri, {     
+    useNewUrlParser: true,
+    useCreateIndex: true,
+    useUnifiedTopology: true
+}).then(() => {
+    console.log('Connected to MongoDB Atlas!');
+}).catch(err => {
+    // console.log(process.env.MONGO_URI);
+    console.log('ERROR:', err.message);
+});
+ 
+
 
 app.use('/', indexRouter);
 app.use('/chats', chatsRouter);
