@@ -1,6 +1,10 @@
 var cloudinary  =   require("cloudinary");
 var db          =   require("../database/config");
-var firebase = require("firebase/app");
+var firebase    =   require("firebase/app");
+var UserSchema        =   require("../models/users");
+var ChatSchema       =   require("../models/chats");
+
+
 // Add the Firebase products that you want to use
 require("firebase/auth");
 
@@ -30,6 +34,14 @@ const userChatsCollection = db.collection("userChats");
 
 module.exports = {
 
+    async getLandingPage( req, res, next) {
+        var user = firebase.auth().currentUser;
+
+        if ( user)
+            res.send( user);
+        res.render("index");
+    },
+
     // == == == REGISTER USER == == == //
     async registerUser( req, res, next) {  
         var email = req.body.email;
@@ -48,20 +60,25 @@ module.exports = {
         var uid = user.uid;
         
         var userDetails = {
-            id: uid,
+            _id: uid,
             name: req.body.name,
-            email: email
-            // dob: req.body.dob
+            email: email,
+            chats: [],
+            friends: []
         } 
-        
-        // add user info in users collection
-        const docRef = await usersCollection.doc(uid).set( userDetails);
 
-        // add user in userChatsCollection
-        let userChatsObj = {
-            chats: []
-        }
-        const chatRef = await userChatsCollection.doc(uid).set( userChatsObj);
+        await UserSchema.create( userDetails);
+
+        
+        
+        // // add user info in users collection
+        // const docRef = await usersCollection.doc(uid).set( userDetails);
+
+        // // add user in userChatsCollection
+        // let userChatsObj = {
+        //     chats: []
+        // }
+        // const chatRef = await userChatsCollection.doc(uid).set( userChatsObj);
 
         res.send( user);
     },
@@ -103,15 +120,16 @@ module.exports = {
     // == == == UPDATE NAME == == == //
     async updateUserDisplayName( req, res, next) {
         var user = firebase.auth().currentUser;
-
+        var newDisplayName = req.body.displayName;
+        
         await user.updateProfile({
-            displayName: req.body.displayName,            
+            displayName: newDisplayName,            
         }).catch( function( error) {
             res.status(500).send(error.message);
-        })
-
+        });
+        
+        await UserSchema.findByIdAndUpdate( user.uid, {name: newDisplayName});
         res.send( user);
-
     },
 
     // == == == UPDATE EMAIL == == == //
@@ -121,10 +139,13 @@ module.exports = {
 
         user.updateEmail(newEmail).then(function() {
             sendVerificationEmail();
-            res.status(200).send( user);
+
         }).catch(function(error) {
             res.status(500).send(error.message);            
         });        
+        await UserSchema.findByIdAndUpdate( user.uid, {email: newEmail});
+
+        res.status(200).send( user);
     },
 
     // == == == UPDATE PASSWORD == == == //

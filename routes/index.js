@@ -3,6 +3,7 @@ var router = express.Router();
 
 const { asyncErrorHandler } =    require('../middleware/index');
 const { 
+    getLandingPage,
     signInUser, 
     registerUser, 
     getMainPage, 
@@ -21,9 +22,7 @@ const {
 
 // ================ LOGIN ================ //
 /* GET login page. */
-router.get('/', function(req, res, next) {
-    res.render('index');
-});
+router.get('/', asyncErrorHandler(getLandingPage));
 
 /* POST login page. */
 router.post('/login', asyncErrorHandler(signInUser));
@@ -50,7 +49,7 @@ router.get("/logout", asyncErrorHandler( getLogout));
 // ================================================= //
 
 // ================ UPDATE NAME OF USER ================ //
-router.post('/update-name', asyncErrorHandler( updateUserDisplayName));
+router.put('/update-name', asyncErrorHandler( updateUserDisplayName));
 
 // ================ UPDATE USER EMAIL ================ //
 router.post('/update-email', asyncErrorHandler( updateUserEmail));
