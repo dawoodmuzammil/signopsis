@@ -13,6 +13,7 @@ var db = require("./database/config");
 
 var indexRouter = require('./routes/index');
 var chatsRouter = require('./routes/chats');
+var friendsRouter = require('./routes/friends');
 
 var app = express();
 var http = require('http').createServer(app);
@@ -34,6 +35,7 @@ app.use(bodyParser.json());
 
 app.use('/', indexRouter);
 app.use('/chats', chatsRouter);
+app.use('/friends', friendsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
