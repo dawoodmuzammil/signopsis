@@ -12,8 +12,8 @@ var UserSchema = new mongoose.Schema({
     ],
     friends: [
         {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User"
+            type: String,
+            ref: this
         }
     ]
 })
