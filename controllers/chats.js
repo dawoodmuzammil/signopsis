@@ -1,7 +1,10 @@
 var cloudinary  =   require("cloudinary");
 var db          =   require("../database/config");
-var firebase = require("firebase/app");
-let admin = require("firebase-admin");
+var firebase    =   require("firebase/app");
+let admin       =   require("firebase-admin");
+var UserSchema  =   require("../models/users");
+var ChatSchema  =   require("../models/chats");
+var mongoose    =   require ('mongoose');
 
 // Add the Firebase products that you want to use
 require("firebase/auth");
@@ -62,16 +65,17 @@ module.exports = {
     },
 
     async postSendMessage( req, res, next) {
-        var sender = req.body.sender; // Dawood
-        var receiver = req.body.receiver; // Talha        
+        var sender = req.body.sender; 
+        var receiver = req.body.receiver;    
         
         // check for sender if he already has this chat        
-        var chatID = await getChatId( sender, receiver);
-
+        var chat = await ChatSchema.findOne({ "members": { $all : [sender, receiver] } } )
+        
+        
         // if chat exists, send message
-        if ( !chatID) {                        
-            chatID = await createChat( sender, receiver);            
-            updateUserChatsCollection( chatID, sender, receiver);
+        if ( !chat) {                        
+            chat = await createChat( sender, receiver);               
+            updateUserChatsCollection( chat._id, sender, receiver);
         }
 
         var message = {
@@ -81,16 +85,11 @@ module.exports = {
             message_date: getDate(),
             message_time: getTime()
         }
-        
-        let createdMessage = await chatsCollection.doc( chatID)
+        console.log( chat._id);
+        let createdMessage = await chatsCollection.doc( "" + chat._id)                                    
                                     .collection("messages")
-                                    .add(message);
-        await chatsCollection.doc( chatID).update({
-                            lastMessage: createdMessage.id
-                        });
-        
-
-        res.send( chatID);        
+                                    .add(message);        
+        res.send( chat._id);  // could return something else, too      
     }
 }
 
@@ -108,48 +107,24 @@ function getTime() {
     return time;
 }
 
-async function getChatId( sender, receiver) {
-
-    // get all chatIds of sender
-    var senderSnapshot = await chatsCollection.where('members', 'array-contains', sender).get();
-    var senderChatId = [];
-    
-    senderSnapshot.forEach( (doc) => {
-        senderChatId.push(doc.id);
-    });
-
-    // get all chatIds of receiver
-    var receiverSnapshot = await chatsCollection.where('members', 'array-contains', receiver).get();
-    var receiverChatId = [];
-
-    receiverSnapshot.forEach( (doc) => {
-        receiverChatId.push( doc.id)
-    });
-
-    // the intersection of both the arrays will be the chatId of (sender, receiver) pair    
-    let chatID = senderChatId.filter( x => receiverChatId.includes(x));
-    
-    return chatID[0];
-}
-
 async function createChat( sender, receiver) {
     let chatObj = {
         members: [sender, receiver],
-        lastMessage: null
+        // lastMessage: null
+        createdAt: Date.now()
     }
-    let createdChat = await chatsCollection.add( chatObj);
-    return createdChat.id;
+    let createdChat = await ChatSchema.create( chatObj);    
+    return createdChat._id;
 }
 
-async function updateUserChatsCollection( chatID, sender, receiver) {
-    let senderRef = userChatsCollection.doc( sender);
-    let receiverRef = userChatsCollection.doc( receiver);    
+async function updateUserChatsCollection( chatID, sender, receiver) {    
+    // get users
+    var senderUser = await UserSchema.findById( sender);
+    var receiverUser = await UserSchema.findById( receiver);
 
-    let senderUpdate = await senderRef.update({
-        chats: admin.firestore.FieldValue.arrayUnion( chatID)
-    });
-
-    let receiverUpdate = await receiverRef.update({
-        chats: admin.firestore.FieldValue.arrayUnion( chatID)
-    })
+    // update chats array for each user
+    await senderUser.chats.push( chatID);
+    senderUser.save();
+    await receiverUser.chats.push( chatID);
+    receiverUser.save();
 }

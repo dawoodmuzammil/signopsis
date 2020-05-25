@@ -1,13 +1,14 @@
 var mongoose = require("mongoose");
 
 var ChatSchema = new mongoose.Schema({    
-    _id: String,
+    // _id: String,
     members: [
         {
-            type: mongoose.Schema.Types.ObjectId,
+            type: String,
             ref: "User"
         }
-    ]
+    ],
+    createdAt: Date
 })
 
 module.exports = mongoose.model( "Chat", ChatSchema);
