@@ -30,10 +30,10 @@ module.exports = {
         var friendId = req.params.friendId;
         
         var senderUser = await UserSchema.findById( user.uid);
+        var friend = await UserSchema.findById( friendId);        
         
         // check if friendship already exists
         var exists = senderUser.friends.includes( friendId)
-        var friend = await UserSchema.findById( friendId);        
 
         if ( !exists) {            
             // update chats array for each user
@@ -44,13 +44,32 @@ module.exports = {
             res.status(200).send("Friend added successfully.");        
         }
         else {
-            res.status(400).send("You arleady have " + friend.name + " added as a friend.");
+            res.status(400).send("You already have " + friend.name + " added as a friend.");
         }
     },
 
     // /friends/{friendId}/delete-friend
     async deleteFriend( req, res, next) {
+        var user = firebase.auth().currentUser;
+        var friendId = req.params.friendId;
+        
+        var senderUser = await UserSchema.findById( user.uid);
+        var friend = await UserSchema.findById( friendId);   
+        
+        // check if friendship already exists
+        var exists = senderUser.friends.includes( friendId);
 
+        if ( exists) {            
+            // update chats array for each user
+            await senderUser.friends.pull( friendId);
+            senderUser.save();
+            await friend.friends.pull( user.uid);
+            friend.save();
+            res.status(200).send("Deletion successful. " + friend.name + " is no longer your friend.");        
+        }
+        else {
+            res.status(400).send("Unable to delete since you did not have " + friend.name + " added as a friend.");
+        }
     },
 
     async getFriendsList( req, res, next) {
