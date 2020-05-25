@@ -69,17 +69,6 @@ module.exports = {
 
         await UserSchema.create( userDetails);
 
-        
-        
-        // // add user info in users collection
-        // const docRef = await usersCollection.doc(uid).set( userDetails);
-
-        // // add user in userChatsCollection
-        // let userChatsObj = {
-        //     chats: []
-        // }
-        // const chatRef = await userChatsCollection.doc(uid).set( userChatsObj);
-
         res.send( user);
     },
 

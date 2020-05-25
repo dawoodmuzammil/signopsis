@@ -33,7 +33,6 @@ cloudinary.config({
 
 const usersCollection = db.collection("users"); // get chats collection
 const chatsCollection = db.collection("chats"); // get chats collection
-// const userChatsCollection = db.collection("userChats"); // get chats collection
 
 module.exports = {
     // POST VIDEO
