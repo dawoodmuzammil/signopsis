@@ -73,6 +73,13 @@ module.exports = {
     },
 
     async getFriendsList( req, res, next) {
-
+        var user = firebase.auth().currentUser;
+        
+        var senderUser = await UserSchema.findById( user.uid).populate({
+            path: "friends",
+            model: "User",
+            select: "name"
+        });
+        res.send( senderUser);
     }
 }
