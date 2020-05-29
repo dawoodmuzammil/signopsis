@@ -38,24 +38,20 @@ module.exports = {
     async getAllChats( req, res, next) {
         var user = firebase.auth().currentUser;
         let chatRef
-        if ( user) {
-            var uid = user.uid;
 
+        // if user found
+        if ( user) {
+            // extract unique ID of user
+            var uid = user.uid; 
+
+            // retrieve user from Mongo
             var userInfo = await UserSchema.findById( uid);
-            if ( userInfo) {
-                var chats = userInfo.chats;
-                // chats.forEach( chat => {
-                //     console.log("")
-                // });
-                let allChats = chatsCollection.get()
-                    .then( snapshot => {
-                        snapshot.forEach( doc => {
-                            console.log(doc.id, '=>', doc.data());
-                        });
-                    })
-                        .catch(err => {
-                        console.log('Error getting documents', err);
-                    });            
+            var chatIds = userInfo.chats;
+
+            if ( chatIds.length > 0) {
+                var chats = await ChatSchema.find( {
+                    '_id': { $in: chatIds}
+                }).populate('members', 'name');
                 res.send( chats);
             }
             else {
