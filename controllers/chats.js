@@ -44,47 +44,54 @@ module.exports = {
             // extract unique ID of user
             var uid = user.uid; 
 
-            // retrieve user from Mongo
+            // retrieve user's chatIDs from Mongo
             var userInfo = await UserSchema.findById( uid);
             var chatIds = userInfo.chats;
 
+            // check if he has any chats
             if ( chatIds.length > 0) {
+                // retrieve information from the ChatSchema about all his chats, sorted by lastMessage date
                 var chats = await ChatSchema.find( {
                     '_id': { $in: chatIds}
                 }).populate('members', 'name').sort('-lastMessage');
                 res.send( chats);
             }
             else {
+                // user has no chats.
                 res.status(200).send("You have no chats.");
             }
         }
         else 
-            res.send("not logged in");
+            res.status(400).send("User is not logged in.");
     },
 
     async getChat( req, res, next) {
         var user = firebase.auth().currentUser;
 
-        // chat if that chat retrieved indeed belongs to the user
-        var chat = await ChatSchema.findById( req.params.chatId);
-        var members = chat.members;
-        var belongs = members.includes( user.uid);
+        if ( user) {
+            // chat if that chat retrieved indeed belongs to the user
+            var chat = await ChatSchema.findById( req.params.chatId);
+            var members = chat.members;
+            var belongs = members.includes( user.uid);
 
-        if (!belongs) {
-            res.status(400).send("The chat you requested does not belong to you.");
+            if (!belongs) {
+                res.status(400).send("The chat you requested does not belong to you.");
+            }
+            else {
+                var chatInfo = await ChatSchema.findById( req.params.chatId).populate('members', 'name');        
+
+                var chatId = chat._id;
+                var snapshot = await chatsCollection
+                                .doc( "" + chatId)
+                                .collection('messages')
+                                .get();
+                var messages = snapshot.docs.map(doc => doc.data());                                
+                res.send( {messages, chatInfo});
+            }            
         }
         else {
-            var chatId = chat._id;
-            var snapshot = await chatsCollection
-                            .doc( "" + chatId)
-                            .collection('messages')
-                            .get();
-            var docs = snapshot.docs.map(doc => doc.data());                                
-            res.send( docs);
+            res.status(400).send("User not logged in.");
         }
-
-        // var chat = await ChatSchema.findOne({ "members": { $all : [sender, receiver] } } )
-        
     },
 
     // POST VIDEO
