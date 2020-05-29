@@ -51,7 +51,7 @@ module.exports = {
             if ( chatIds.length > 0) {
                 var chats = await ChatSchema.find( {
                     '_id': { $in: chatIds}
-                }).populate('members', 'name');
+                }).populate('members', 'name').sort('-lastMessage');
                 res.send( chats);
             }
             else {
