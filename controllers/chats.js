@@ -66,6 +66,31 @@ module.exports = {
             res.send("not logged in");
     },
 
+    async getChat( req, res, next) {
+        var user = firebase.auth().currentUser;
+
+        // chat if that chat retrieved indeed belongs to the user
+        var chat = await ChatSchema.findById( req.params.chatId);
+        var members = chat.members;
+        var belongs = members.includes( user.uid);
+
+        if (!belongs) {
+            res.status(400).send("The chat you requested does not belong to you.");
+        }
+        else {
+            var chatId = chat._id;
+            var snapshot = await chatsCollection
+                            .doc( "" + chatId)
+                            .collection('messages')
+                            .get();
+            var docs = snapshot.docs.map(doc => doc.data());                                
+            res.send( docs);
+        }
+
+        // var chat = await ChatSchema.findOne({ "members": { $all : [sender, receiver] } } )
+        
+    },
+
     // POST VIDEO
     async postVideo( req, res, next) {        
         var user = firebase.auth().currentUser;
@@ -93,10 +118,8 @@ module.exports = {
         }
     },
 
+    // /chats/:receiverId/sendMessage
     async postSendMessage( req, res, next) {
-        // var sender = req.body.sender; // should ideally be current user
-        // var receiver = req.body.receiver; // should ideally be retrieved from url
-
         var user = firebase.auth().currentUser;
 
         if ( user) {
@@ -104,7 +127,7 @@ module.exports = {
             var receiver = req.params.receiverId;
             
             // check for sender if he already has this chat        
-            var chat = await ChatSchema.findOne({ "members": { $all : [sender, receiver] } } )
+            var chat = await ChatSchema.findOne({ "members": { $all : [sender, receiver] } } )            
             
             
             // if chat exists, send message
@@ -130,8 +153,8 @@ module.exports = {
             res.status(200).send( chat._id);  // could return something else, too    
         }
         else {
-            res.status(400).send("User not logged in.");
-        }  
+            res.status(400).send("User not logged in.");         
+        }
     }
 }
 
