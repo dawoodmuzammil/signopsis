@@ -165,7 +165,15 @@ module.exports = {
 
     // == == == RESET PASSWORD == == == //
     async deleteAccount( req, res, next) {
+        var user = firebase.auth().currentUser;
 
+        user.delete().then( async function() {
+            // User deleted.
+            await UserSchema.findByIdAndRemove( user.uid);
+            res.status(200).end();
+        }).catch(function(error) {
+            res.status( 500).send("Something went wrong. Please try again later.");
+        });
     }
 
     // == == == UPDATE PASSWORD == == == //
