@@ -111,6 +111,8 @@ module.exports = {
             if ( !chat) {                        
                 chat = await createChat( sender, receiver);               
                 updateUserChatsCollection( chat._id, sender, receiver);
+                var chatRef = await chatsCollection.doc( "" + chat._id).set({}); 
+                console.log( chatRef);
             }
 
             var message = {
