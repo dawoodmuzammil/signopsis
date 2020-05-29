@@ -57,18 +57,15 @@ The API is now online [here](https://saysl-signchat.herokuapp.com/).
         * Email sending unsuccesful: `500 Internal Server Error`
 
 ======================= CHATS =======================
+* GET `/chats/:chatId`
+    * Get a particular chat    
 
-* POST `/chats/sendMessage`
+* POST `/chats/:receiverId/sendMessage`
     * Sends a message from user X to user Y
-    * `Body: { sender: String, receiver: String, content: String}`
-    * **sender**: Firebase unique user ID of X
-    * **receiver**: Firebase unique user ID of Y
+    * `Body: { content: String }`        
     * **content**: message content
-    * **example:**
-        * "receiver": "UlrXRNuR5McgMVVACerMHgLXv412", 
-        * "sender": "YOC6hLno9dTN4UnB5COWafsp4cV2",
+    * **example:**                
         * "content":  "This is a test message from X to Y"
-    
 
 *  GET `/video-upload` 
     *  Displays the page where we can upload videos (only for browsers - testing)
