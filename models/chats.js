@@ -8,7 +8,8 @@ var ChatSchema = new mongoose.Schema({
             ref: "User"
         }
     ],
-    createdAt: Date
+    createdAt: Date,
+    lastMessage: Date
 })
 
 module.exports = mongoose.model( "Chat", ChatSchema);

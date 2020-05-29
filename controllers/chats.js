@@ -31,10 +31,41 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_URL
 });
 
-const usersCollection = db.collection("users"); // get chats collection
+// const usersCollection = db.collection("users"); // get chats collection
 const chatsCollection = db.collection("chats"); // get chats collection
 
 module.exports = {
+    async getAllChats( req, res, next) {
+        var user = firebase.auth().currentUser;
+        let chatRef
+        if ( user) {
+            var uid = user.uid;
+
+            var userInfo = await UserSchema.findById( uid);
+            if ( userInfo) {
+                var chats = userInfo.chats;
+                // chats.forEach( chat => {
+                //     console.log("")
+                // });
+                let allChats = chatsCollection.get()
+                    .then( snapshot => {
+                        snapshot.forEach( doc => {
+                            console.log(doc.id, '=>', doc.data());
+                        });
+                    })
+                        .catch(err => {
+                        console.log('Error getting documents', err);
+                    });            
+                res.send( chats);
+            }
+            else {
+                res.status(200).send("You have no chats.");
+            }
+        }
+        else 
+            res.send("not logged in");
+    },
+
     // POST VIDEO
     async postVideo( req, res, next) {        
         var user = firebase.auth().currentUser;
@@ -63,8 +94,8 @@ module.exports = {
     },
 
     async postSendMessage( req, res, next) {
-        var sender = req.body.sender; 
-        var receiver = req.body.receiver;    
+        var sender = req.body.sender; // should ideally be current user
+        var receiver = req.body.receiver; // should ideally be retrieved from url
         
         // check for sender if he already has this chat        
         var chat = await ChatSchema.findOne({ "members": { $all : [sender, receiver] } } )
@@ -81,8 +112,9 @@ module.exports = {
             content:  req.body.content,
             seen: false,
             message_date: getDate(),
-            message_time: getTime()
+            message_time: getTime(),
         }
+        await ChatSchema.findByIdAndUpdate( chat._id, { lastMessage: Date.now() });
         console.log( chat._id);
         let createdMessage = await chatsCollection.doc( "" + chat._id)                                    
                                     .collection("messages")

@@ -7,7 +7,9 @@ const upload = multer({
 });
 
 const { asyncErrorHandler } =    require('../middleware/index');
-const { postVideo, postSendMessage } = require("../controllers/chats");
+const { getAllChats, postVideo, postSendMessage } = require("../controllers/chats");
+
+router.get('/', asyncErrorHandler( getAllChats));
 
 // ================ VIDEO ================ //
 /* GET video-upload page. */
