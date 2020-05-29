@@ -26,20 +26,20 @@ The API is now online [here](https://saysl-signchat.herokuapp.com/).
     *  Log users out
 
 ---- UPDATE ACTIONS ----
-* POST `/update-name`
+* PUT `/update-name`
     * Updates displayName property of user
     * Example JSON payload:
         * `{`
         * `   "name": "Example Name"`
         * `}`
         
-* POST `/update-email`
+* PUT `/update-email`
     * Update email of user
     * Example JSON payload:
         * `{`
         * `   "email": "example@example.com"`
         * `}`
-* POST `/update-password`
+* PUT `/update-password`
     * Update password of user
     * Example JSON payload:
         * `{`

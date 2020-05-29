@@ -16,6 +16,6 @@ router.get('/', asyncErrorHandler( getAllChats));
 router.post("/upload-video", upload.single('pic-to-be-sent'), asyncErrorHandler(postVideo));
 
 // ================ MESSAGE ================ //
-router.post('/sendMessage', asyncErrorHandler(postSendMessage));
+router.post('/:receiverId/sendMessage', asyncErrorHandler(postSendMessage));
 
 module.exports = router;

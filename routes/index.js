@@ -52,10 +52,10 @@ router.get("/logout", asyncErrorHandler( getLogout));
 router.put('/update-name', asyncErrorHandler( updateUserDisplayName));
 
 // ================ UPDATE USER EMAIL ================ //
-router.post('/update-email', asyncErrorHandler( updateUserEmail));
+router.put('/update-email', asyncErrorHandler( updateUserEmail));
 
 // ================ UPDATE USER PASSWORD ================ //
-router.post('/update-password', asyncErrorHandler( updateUserPassword));
+router.put('/update-password', asyncErrorHandler( updateUserPassword));
 
 // ================ PASSWORD RESET ================ //
 router.post('/reset-password', asyncErrorHandler( resetPassword));

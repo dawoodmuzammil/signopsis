@@ -94,32 +94,42 @@ module.exports = {
     },
 
     async postSendMessage( req, res, next) {
-        var sender = req.body.sender; // should ideally be current user
-        var receiver = req.body.receiver; // should ideally be retrieved from url
-        
-        // check for sender if he already has this chat        
-        var chat = await ChatSchema.findOne({ "members": { $all : [sender, receiver] } } )
-        
-        
-        // if chat exists, send message
-        if ( !chat) {                        
-            chat = await createChat( sender, receiver);               
-            updateUserChatsCollection( chat._id, sender, receiver);
-        }
+        // var sender = req.body.sender; // should ideally be current user
+        // var receiver = req.body.receiver; // should ideally be retrieved from url
 
-        var message = {
-            sender: sender,
-            content:  req.body.content,
-            seen: false,
-            message_date: getDate(),
-            message_time: getTime(),
+        var user = firebase.auth().currentUser;
+
+        if ( user) {
+            var sender = user.uid;
+            var receiver = req.params.receiverId;
+            
+            // check for sender if he already has this chat        
+            var chat = await ChatSchema.findOne({ "members": { $all : [sender, receiver] } } )
+            
+            
+            // if chat exists, send message
+            if ( !chat) {                        
+                chat = await createChat( sender, receiver);               
+                updateUserChatsCollection( chat._id, sender, receiver);
+            }
+
+            var message = {
+                sender: sender,
+                content:  req.body.content,
+                seen: false,
+                message_date: getDate(),
+                message_time: getTime(),
+            }
+            await ChatSchema.findByIdAndUpdate( chat._id, { lastMessage: Date.now() });
+            console.log( chat._id);
+            let createdMessage = await chatsCollection.doc( "" + chat._id)                                    
+                                        .collection("messages")
+                                        .add(message);        
+            res.status(200).send( chat._id);  // could return something else, too    
         }
-        await ChatSchema.findByIdAndUpdate( chat._id, { lastMessage: Date.now() });
-        console.log( chat._id);
-        let createdMessage = await chatsCollection.doc( "" + chat._id)                                    
-                                    .collection("messages")
-                                    .add(message);        
-        res.send( chat._id);  // could return something else, too      
+        else {
+            res.status(400).send("User not logged in.");
+        }  
     }
 }
 
