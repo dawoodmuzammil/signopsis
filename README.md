@@ -72,7 +72,7 @@ The API is now online [here](https://saysl-signchat.herokuapp.com/).
 
 *  POST `chats/:receiverId/sendVideo`
     *  Uploads a video to cloud
-    * `Body: { filepath}`
+    * `Body: { filepath, translation: String}`
     * Not really sure how this is going to work for android application
 
 ======================= FRIENDS =======================

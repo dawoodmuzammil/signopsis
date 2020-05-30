@@ -113,14 +113,38 @@ module.exports = {
                 var chatRef = await chatsCollection.doc( "" + chat._id).set({});                 
             }
 
-            // upload video on cloudinary
-            var image = await cloudinary.v2.uploader.upload(req.file.path,
-                { resource_type: "video" }); 
+            // upload video on cloudinary            
+            var video = await cloudinary.v2.uploader.upload(req.file.path,                 
+                {
+                    resource_type: "video",
+                    transformation: [
+                        {
+                            width: 300, 
+                            crop: "scale"
+                        },
+                        {
+                            gravity: "south", 
+                            x: 0, 
+                            y: 34, 
+                            width: 250,
+                            overlay: {
+                                font_family: "Roboto", 
+                                font_size: 16, 
+                                text_align: "center", 
+                                text: req.body.translation
+                            }, 
+                            crop: "fit",                                
+                            color: "white"
+                        }
+                        ]
+                }, function(error, result) { 
+                    console.log(result, error);
+                });
 
             // prepare message string
             var messageContent = "You have received a new video message from " + user.displayName + ".\n\nLink to the video: ";
-            messageContent += image.secure_url;
-
+            messageContent += video.secure_url;
+            
             // prepare message object
             var message = {
                 sender: sender,
