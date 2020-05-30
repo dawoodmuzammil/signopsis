@@ -15,7 +15,7 @@ router.get('/:chatId', asyncErrorHandler( getChat));
 
 // ================ VIDEO ================ //
 /* GET video-upload page. */
-router.post("/upload-video", upload.single('pic-to-be-sent'), asyncErrorHandler(postVideo));
+router.post("/:receiverId/sendVideo", upload.single('video'), asyncErrorHandler(postVideo));
 
 // ================ MESSAGE ================ //
 router.post('/:receiverId/sendMessage', asyncErrorHandler(postSendMessage));

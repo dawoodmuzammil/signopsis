@@ -94,30 +94,53 @@ module.exports = {
         }
     },
 
-    // POST VIDEO
-    async postVideo( req, res, next) {        
+    // /chats/:receiverId/sendVideo
+    async postVideo( req, res, next) {                
         var user = firebase.auth().currentUser;
-        
+
         if ( user) {
+            var sender = user.uid;
+            var receiver = req.params.receiverId;
+            
+            // check for sender if he already has this chat        
+            var chat = await ChatSchema.findOne({ "members": { $all : [sender, receiver] } } )            
+            
+            
+            // if chat exists, send message
+            if ( !chat) {                        
+                chat = await createChat( sender, receiver);               
+                updateUserChatsCollection( chat._id, sender, receiver);
+                var chatRef = await chatsCollection.doc( "" + chat._id).set({});                 
+            }
+
+            // upload video on cloudinary
             var image = await cloudinary.v2.uploader.upload(req.file.path,
-                { resource_type: "video" }); // upload it on cloudinary
-            // get info from cloudinary to be saved in the database
-            var chatObj = {
-                sender: user.email,
-                receiver: "receiver@gmail.com",
-                timestamp: new Date(),
-                url: image.secure_url,
-                public_id: image.public_id
-            };	        
+                { resource_type: "video" }); 
 
-            // const docRef = chatsCollection.doc("pictureRef");
-            console.log(chatObj);
-            let addChatObj = chatsCollection.add( chatObj);
+            // prepare message string
+            var messageContent = "You have received a new video message from " + user.displayName + ".\n\nLink to the video: ";
+            messageContent += image.secure_url;
 
-            res.send(chatObj.url);
+            // prepare message object
+            var message = {
+                sender: sender,
+                content:  messageContent,
+                seen: false,
+                message_date: getDate(),
+                message_time: getTime(),
+            }
+
+            // update lastMessage in Mongo
+            await ChatSchema.findByIdAndUpdate( chat._id, { lastMessage: Date.now() });
+            
+            // add message to Firebase
+            let createdMessage = await chatsCollection.doc( "" + chat._id)                                    
+                                        .collection("messages")
+                                        .add(message);        
+            res.status(200).send( chat._id);  // could return something else, too    
         }
         else {
-            res.redirect("/");
+            res.status(400).send("User not logged in.");         
         }
     },
 
@@ -141,6 +164,7 @@ module.exports = {
                 console.log( chatRef);
             }
 
+            // prepare message object
             var message = {
                 sender: sender,
                 content:  req.body.content,
@@ -148,8 +172,11 @@ module.exports = {
                 message_date: getDate(),
                 message_time: getTime(),
             }
+
+            // update lastMessage in Mongo
             await ChatSchema.findByIdAndUpdate( chat._id, { lastMessage: Date.now() });
-            console.log( chat._id);
+            
+            // add message to Firebase
             let createdMessage = await chatsCollection.doc( "" + chat._id)                                    
                                         .collection("messages")
                                         .add(message);        
