@@ -100,6 +100,23 @@ module.exports = {
             res.redirect("/");
     },    
 
+    async getUserId( req, res, next) {
+        var currentUser = firebase.auth().currentUser;        
+        
+        if ( currentUser) {
+            var email = req.params.email;
+
+            var user = await UserSchema.findOne({email: req.params.email});
+            if (user)
+                res.status(200).send( user._id);
+            else
+                res.status(404).send("User not found")
+            
+        }
+        else
+            res.status(400).send("You do not have permission to perform this action.")
+    },
+
     // == == == LOG OUT == == == //
     async getLogout( req, res, next) {
         firebase.auth().signOut();

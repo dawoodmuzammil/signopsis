@@ -21,6 +21,9 @@ The API is now online [here](https://saysl-signchat.herokuapp.com/).
 *  POST `/register`
     *  Registers a new user
     * `Body: { email: String, password: String, name: String, dob (Date of birth): Date}`
+
+* GET `/user/:email`
+    * Get unique ID of a user based on the email address
     
 *  GET `/logout` 
     *  Log users out
