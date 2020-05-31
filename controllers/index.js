@@ -117,6 +117,23 @@ module.exports = {
             res.status(400).send("You do not have permission to perform this action.")
     },
 
+    async getUserEmail( req, res, next) {
+        var currentUser = firebase.auth().currentUser;        
+        
+        if ( currentUser) {
+            var id = req.params.id;
+            console.log( id); 
+            var user = await UserSchema.findById( id);
+            if (user)
+                res.status(200).send( user);
+            else
+                res.status(404).send("User not found")
+            
+        }
+        else
+            res.status(400).send("You do not have permission to perform this action.")
+    },
+
     // == == == LOG OUT == == == //
     async getLogout( req, res, next) {
         firebase.auth().signOut();

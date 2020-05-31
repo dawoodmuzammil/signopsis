@@ -9,6 +9,7 @@ const {
     getMainPage, 
     postVideo, 
     getUserId,
+    getUserEmail,
     getLogout, 
     resetPassword, 
     deleteAccount,
@@ -41,8 +42,11 @@ router.post('/register', asyncErrorHandler(registerUser));
 /* GET video-upload page. */
 router.get('/video-upload', asyncErrorHandler(getMainPage));
 
-// ================ LOG OUT ================ //
-router.get("/user/:email", asyncErrorHandler( getUserId));
+// ================ GET USER ID ================ //
+router.get("/user/email/:email", asyncErrorHandler( getUserId));
+
+// ================ GET USER EMAIL ================ //
+router.get("/user/id/:id", asyncErrorHandler( getUserEmail));
 
 // ================ LOG OUT ================ //
 router.get("/logout", asyncErrorHandler( getLogout));
