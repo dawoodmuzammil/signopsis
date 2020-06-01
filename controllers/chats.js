@@ -84,6 +84,7 @@ module.exports = {
                 var snapshot = await chatsCollection
                                 .doc( "" + chatId)
                                 .collection('messages')
+                                .orderBy('timestamp')
                                 .get();
                 var messages = snapshot.docs.map(doc => doc.data());                                
                 res.send( {messages, chatInfo});
@@ -150,8 +151,7 @@ module.exports = {
                 sender: sender,
                 content:  messageContent,
                 seen: false,
-                message_date: getDate(),
-                message_time: getTime(),
+                timestamp: Date.now()
             }
 
             // update lastMessage in Mongo
@@ -193,8 +193,7 @@ module.exports = {
                 sender: sender,
                 content:  req.body.content,
                 seen: false,
-                message_date: getDate(),
-                message_time: getTime(),
+                timestamp: Date.now()
             }
 
             // update lastMessage in Mongo

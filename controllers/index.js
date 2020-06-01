@@ -3,6 +3,7 @@ var db          =   require("../database/config");
 var firebase    =   require("firebase/app");
 var UserSchema        =   require("../models/users");
 var ChatSchema       =   require("../models/chats");
+let admin       =   require("firebase-admin");
 
 
 // Add the Firebase products that you want to use
@@ -36,7 +37,7 @@ module.exports = {
 
     async getLandingPage( req, res, next) {
         var user = firebase.auth().currentUser;
-
+        console.log( admin.firestore.Timestamp.now())
         if ( user)
             res.send( user);
         res.render("index");
