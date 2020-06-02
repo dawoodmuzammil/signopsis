@@ -144,7 +144,7 @@ module.exports = {
     // == == == UPDATE NAME == == == //
     async updateUserDisplayName( req, res, next) {
         var user = firebase.auth().currentUser;
-        var newDisplayName = req.body.name;
+        var newDisplayName = req.body.displayName;
         
         await user.updateProfile({
             displayName: newDisplayName,            
