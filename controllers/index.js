@@ -146,7 +146,7 @@ module.exports = {
         var user = firebase.auth().currentUser;
         var newDisplayName = req.body.displayName;
         
-        await user.updateProfile({
+        user.updateProfile({
             displayName: newDisplayName,            
         }).catch( function( error) {
             res.status(500).send(error.message);
