@@ -37,10 +37,11 @@ module.exports = {
 
     async getLandingPage( req, res, next) {
         var user = firebase.auth().currentUser;
-        console.log( admin.firestore.Timestamp.now())
+                
         if ( user)
             res.send( user);
-        res.render("index");
+        else
+            res.status(401).send("User not logged in.");        
     },
 
     // == == == REGISTER USER == == == //
@@ -146,7 +147,7 @@ module.exports = {
         var user = firebase.auth().currentUser;
         var newDisplayName = req.body.displayName;
         
-        user.updateProfile({
+        await user.updateProfile({
             displayName: newDisplayName,            
         }).catch( function( error) {
             res.status(500).send(error.message);
